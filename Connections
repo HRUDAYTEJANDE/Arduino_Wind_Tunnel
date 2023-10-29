@@ -1,0 +1,27 @@
+Connections
+
+Fan Pinouts:
+GND (Black) to GND[Arduino]**
+VCC (Yellow) to VIN[Arduino]**
+Sense (Green) to DIO3[Arduino]**
+PWM (Blue) to DIO5[Arduino]**
+
+Main Breadboard Connections:-
++ to +[Breadboard2]
+- to -[Breadboard2]
+
+LCD Pinouts:
+GND to -[-Breadboard2]
+VCC to +[-Breadboard2]
+SDA to A4[Arduino]
+SCL to A5[Arduino]
+
+Servo Pinouts
+GND (Brown) to -[MainBreadboard]
+VCC (Red) to +[MainBreadboard]
+Signal (Yellow) to DIO13[Arduino]
+
+Pushbuttons*
+
+*Configurable later
+**Extended connections, M-F-M-M
