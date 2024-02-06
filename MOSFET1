@@ -1,0 +1,80 @@
+#include <Servo.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+#define Servo_minus 8
+#define Servo_plus 9
+#define Servo_pin 13
+#define MOSFET_PIN 5
+#define Fan_POT A3
+
+int s_angle = 0; // angle of the servo
+int servoSpeed = 5; // Adjust servo speed as needed
+
+Servo mainservo;
+
+void setup() {
+  pinMode(Fan_POT, INPUT);
+  pinMode(Servo_plus, INPUT_PULLUP);
+  pinMode(Servo_minus, INPUT_PULLUP);
+  pinMode(MOSFET_PIN, OUTPUT);
+  
+  mainservo.attach(Servo_pin);
+  mainservo.write(180);
+  delay(1000);
+  mainservo.write(0); // home the servo
+  
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.clear();
+  
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Read the potentiometer value
+  int potValue = analogRead(Fan_POT);
+
+  // Map the potentiometer value to the fan speed (assuming the fan operates at 12V)
+  int fanSpeed = map(potValue, 0, 1023, 0, 255); // PWM value for analogWrite
+  
+  // Control the fan speed using PWM
+  analogWrite(MOSFET_PIN, fanSpeed);
+
+  // Add a slight delay to allow the fan to adjust to the new speed
+  delay(10);
+  
+  // Servo control code
+  int s_value = analogRead(Fan_POT);
+  
+  if (s_angle < 0) // limit the servo to 0 degrees
+  {
+    s_angle = 0;
+  }
+  if (s_angle > 60) // limit the servo to 60 degrees
+  {
+    s_angle = 60;
+  }
+  if (digitalRead(Servo_plus) == HIGH) {
+    s_angle = s_angle + 2; // change angle by 1
+    mainservo.write(s_angle);
+    delay(servoSpeed); // Adjust servo speed
+  }
+  if (digitalRead(Servo_minus) == HIGH) {
+    s_angle = s_angle - 2; // change the angle by 1
+    mainservo.write(s_angle);
+    delay(servoSpeed); // Adjust servo speed
+  }
+
+  lcd.setCursor(0, 0);
+  lcd.print("Angle: ");
+  lcd.print(s_angle);
+
+  lcd.setCursor(0, 1);
+  lcd.print("Fan Speed: ");
+  lcd.print(potValue); // Print potentiometer value for fan speed
+  
+  delay(100); // Adjust the delay according to your preference
+}
